@@ -10,7 +10,7 @@
 .cxx
 local.properties
 
-/.metadata/
+.metadata/
 .idea
 
 .classpath
@@ -20,4 +20,4 @@ local.properties
 
 target/
 out/
-classes/
+/classes
