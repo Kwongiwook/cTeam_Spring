@@ -9,6 +9,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+info/
 
 .metadata/
 .idea
@@ -21,4 +22,6 @@ local.properties
 target/
 out/
 /classes
-db.properties
+.properties
+
+application.properties
