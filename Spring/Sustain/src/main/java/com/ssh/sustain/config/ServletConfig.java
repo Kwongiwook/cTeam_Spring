@@ -11,16 +11,11 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring5.ISpringTemplateEngine;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
+import org.springframework.web.servlet.view.tiles3.TilesView;
+import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 
 @Log4j
 @Configuration
@@ -43,31 +38,21 @@ public class ServletConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public ViewResolver viewResolver() {
-        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-        resolver.setTemplateEngine((ISpringTemplateEngine) templateEngine());
-        resolver.setCharacterEncoding("UTF-8");
-        resolver.setOrder(1);
+    public TilesConfigurer tilesConfigurer() {
+        final TilesConfigurer configurer = new TilesConfigurer();
+        configurer.setDefinitions("WEB-INF/tiles/tiles-definition.xml");
+        configurer.setCheckRefresh(true);
 
-        return resolver;
+        return configurer;
     }
 
-    @Inject
-    public TemplateEngine templateEngine() {
-        SpringTemplateEngine engine = new SpringTemplateEngine();
-        engine.setEnableSpringELCompiler(true);
-        engine.setTemplateResolver(templateResolver());
-        return engine;
-    }
+    @Bean
+    public TilesViewResolver tilesViewResolver() {
+        final TilesViewResolver viewResolver = new TilesViewResolver();
+        viewResolver.setViewClass(TilesView.class);
+        viewResolver.setOrder(1);
 
-    private ITemplateResolver templateResolver() {
-        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-        resolver.setApplicationContext(applicationContext);
-        resolver.setPrefix("/WEB-INF/views/");
-        resolver.setSuffix(".html");
-        resolver.setTemplateMode(TemplateMode.HTML);
-
-        return resolver;
+        return viewResolver;
     }
 
     @Override

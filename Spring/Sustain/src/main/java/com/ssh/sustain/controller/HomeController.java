@@ -12,6 +12,6 @@ public class HomeController {
     @GetMapping("/")
     public String toHome(Model model) {
         model.addAttribute("greeting", "hello");
-        return "thymeleaf/welcome";
+        return "index.tiles";
     }
 }
