@@ -1,6 +1,8 @@
 *.iml
 .gradle
 
+application-key.properties
+
 /local.properties
 .DS_Store
 
@@ -22,6 +24,3 @@ info/
 target/
 out/
 /classes
-.properties
-
-application.properties

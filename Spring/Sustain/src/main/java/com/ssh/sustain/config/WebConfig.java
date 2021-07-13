@@ -1,35 +1,15 @@
 package com.ssh.sustain.config;
 
-import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.Nonnull;
-import javax.servlet.Filter;
-
-public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
-
-    @Nonnull
-    @Override
-    protected String[] getServletMappings() {
-        return new String[]{"/"};
-    }
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
 
     @Override
-    protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{RootConfig.class, SecurityConfig.class};
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("index");
     }
 
-    @Override
-    protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{ServletConfig.class};
-    }
-
-    @Override
-    protected Filter[] getServletFilters() {
-        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
-        encodingFilter.setEncoding("UTF-8");
-        encodingFilter.setForceEncoding(true);
-
-        return new Filter[]{encodingFilter};
-    }
 }

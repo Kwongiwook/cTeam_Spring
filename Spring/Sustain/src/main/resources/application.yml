@@ -1,0 +1,31 @@
+#hibernate
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      jdbc:
+        lob:
+          non_contextual_creation: true
+      hibernate:
+        format_sql: true
+        temp:
+          use_jdbc_metadata_defaults: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  h2:
+    console:
+      enabled: true
+  profiles:
+    include: key
+#logging
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql: trace
+
+server:
+  port: 753
