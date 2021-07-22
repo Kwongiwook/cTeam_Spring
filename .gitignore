@@ -1,7 +1,7 @@
 *.iml
 .gradle
 
-application-key.properties
+application-key.yml
 
 /local.properties
 .DS_Store

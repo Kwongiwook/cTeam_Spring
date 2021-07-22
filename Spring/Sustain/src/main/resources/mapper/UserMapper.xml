@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssh.sustain.mapper.user.UserMapper">
+
+    <insert id="save">
+        INSERT INTO USER(UID, EMAIL, NICKNAME, PROFILE, AUTH)
+        VALUES (#{uid}, #{email}, #{nickname}, #{profile}, #{auth});
+    </insert>
+
+    <select id="findAll" resultType="com.ssh.sustain.model.user.User">
+        SELECT *
+        FROM USER
+    </select>
+
+    <select id="findByEmail" resultType="com.ssh.sustain.model.user.User">
+        SELECT *
+        FROM USER
+        WHERE EMAIL = #{email}
+    </select>
+
+    <update id="update">
+        UPDATE USER
+        SET PROFILE  = #{profile},
+            AUTH     = #{auth},
+            NICKNAME = #{nickname}
+        WHERE EMAIL = #{email}
+    </update>
+
+    <delete id="delete">
+        DELETE
+        FROM USER
+        WHERE EMAIL = #{email}
+    </delete>
+
+    <select id="isExists" resultType="boolean">
+        SELECT IF(COUNT(*) = 1, 1, 0) AS "EXISTS"
+        FROM USER
+        WHERE EMAIL = #{email}
+    </select>
+
+</mapper>

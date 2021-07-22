@@ -12,23 +12,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // 작업을 위해 모든 시큐리티 설정을 제거하였습니다.
         http
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-                .and()
                 .authorizeRequests().antMatchers("/", "/css/**", "/js/**").permitAll()
-                .antMatchers("/api/v1/**").hasRole(Role.USER.name())
-                .anyRequest().authenticated()
-
-                .and().logout().logoutSuccessUrl("/");
-
-        http
-                .oauth2Login()
-                .userInfoEndpoint().userService(customOAuth2UserService);
+                .anyRequest().permitAll();
     }
 }
