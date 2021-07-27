@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Thymeleaf Test</title>
 </head>
-<body>
-<h1>Testing Now</h1>
-</body>
+
+<th:block layout:fragment="content">
+    <div class="content-wrapper">
+        <div class="text-center">
+
+            <div sec:authorize-expr="isAuthenticated()">
+                <h2 th:text="${#authentication.name}"></h2>
+                <h2 th:text="${#authentication.authorities}"></h2>
+                <a href="/logout" th:href="@{/logout}">Logout</a>
+            </div>
+
+            <div sec:authorize-expr="!isAuthenticated()">
+                <a href="/oauth2/authorization/google" th:href="@{/oauth2/authorization/google}">Google Login</a>
+                <a href="/oauth2/authorization/google" th:href="@{/oauth2/authorization/naver}">Naver Login</a>
+            </div>
+
+            <!--            <div th:if="${#authorization.expr('isAuthenticated()')}">-->
+            <!--                <h2 th:text="${#authentication.name}"></h2>-->
+            <!--                <a href="/logout" th:href="@{/logout}">Logout</a>-->
+            <!--            </div>-->
+
+            <!--            <div th:unless="${#authorization.expr('isAuthenticated()')}">-->
+            <!--                <a href="/oauth2/authorization/google" th:href="@{/oauth2/authorization/google}">Google Login</a>-->
+            <!--            </div>-->
+        </div>
+    </div>
+</th:block>
 </html>

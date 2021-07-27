@@ -29,6 +29,8 @@ public class User {
     // default current_timestamp()
     private Date reg_date;
 
+    private String pwd;
+
     @Builder
     public User(String uid, String email, String nickname, String profile, String auth) {
         this.uid = uid;
@@ -36,5 +38,15 @@ public class User {
         this.nickname = nickname;
         this.profile = profile;
         this.auth = auth;
+    }
+
+    @Builder
+    public User(String uid, String email, String nickname, String profile, String auth, String pwd) {
+        this.uid = uid;
+        this.email = email;
+        this.nickname = nickname;
+        this.profile = profile;
+        this.auth = auth;
+        this.pwd = pwd;
     }
 }

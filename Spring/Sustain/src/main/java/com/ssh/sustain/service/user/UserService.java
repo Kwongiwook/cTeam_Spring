@@ -6,13 +6,19 @@ import java.util.List;
 
 public interface UserService {
 
-    User save(User user);
+    User saveSocial(User user);
+
+    User saveNormal(User user);
 
     User findByEmail(String email);
+
+    User findByPwd(String pwd);
 
     List<User> findAll();
 
     User update(User user);
+
+    User updatePwd(User user);
 
     Boolean delete(String email);
 

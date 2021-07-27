@@ -4,6 +4,7 @@ import com.ssh.sustain.mapper.user.UserMapper;
 import com.ssh.sustain.model.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,16 +17,23 @@ public class UserServiceImpl implements UserService {
     private UserMapper mapper;
 
     @Override
-    public User save(User user) {
-        if (mapper.save(user).equals(1)) {
-            return user;
-        }
-        return null;
+    public User saveSocial(User user) {
+        return mapper.saveSocial(user).equals(1) ? user : null;
+    }
+
+    @Override
+    public User saveNormal(User user) {
+        return mapper.saveNormal(user).equals(1) ? user : null;
     }
 
     @Override
     public User findByEmail(String email) {
         return mapper.findByEmail(email);
+    }
+
+    @Override
+    public User findByPwd(String pwd) {
+        return mapper.findByPwd(pwd);
     }
 
     @Override
@@ -35,10 +43,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        if (mapper.update(user).equals(1)) {
-            return user;
-        }
-        return null;
+        return mapper.update(user).equals(1) ? user : null;
+    }
+
+    @Override
+    public User updatePwd(User user) {
+        return mapper.updatePwd(user).equals(1) ? user : null;
     }
 
     @Override
@@ -50,4 +60,5 @@ public class UserServiceImpl implements UserService {
     public Boolean isExists(String email) {
         return mapper.isExists(email);
     }
+
 }

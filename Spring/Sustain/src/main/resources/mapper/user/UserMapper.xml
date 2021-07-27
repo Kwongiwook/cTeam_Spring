@@ -4,9 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssh.sustain.mapper.user.UserMapper">
 
-    <insert id="save">
+    <insert id="saveSocial">
         INSERT INTO USER(UID, EMAIL, NICKNAME, PROFILE, AUTH)
         VALUES (#{uid}, #{email}, #{nickname}, #{profile}, #{auth});
+    </insert>
+
+    <insert id="saveNormal">
+        INSERT INTO USER(EMAIL, NICKNAME, AUTH, PWD)
+        VALUES (#{email}, #{nickname}, #{auth}, #{pwd})
     </insert>
 
     <select id="findAll" resultType="com.ssh.sustain.model.user.User">
@@ -20,11 +25,35 @@
         WHERE EMAIL = #{email}
     </select>
 
+    <select id="findClaimUserByEmail" resultType="com.ssh.sustain.dto.user.ClaimUserDTO">
+        SELECT EMAIL, NICKNAME, AUTH
+        FROM USER
+        WHERE EMAIL = #{email}
+    </select>
+
+    <select id="findByPwd" resultType="com.ssh.sustain.model.user.User">
+        SELECT *
+        FROM USER
+        WHERE PWD = #{pwd}
+    </select>
+
+    <select id="findNormalUserByPwd" resultType="com.ssh.sustain.dto.user.NormalUserDTO">
+        SELECT EMAIL, PWD, NICKNAME, AUTH
+        FROM USER
+        WHERE PWD = #{pwd}
+    </select>
+
     <update id="update">
         UPDATE USER
         SET PROFILE  = #{profile},
             AUTH     = #{auth},
             NICKNAME = #{nickname}
+        WHERE EMAIL = #{email}
+    </update>
+
+    <update id="updatePwd">
+        UPDATE USER
+        SET PWD = #{pwd}
         WHERE EMAIL = #{email}
     </update>
 

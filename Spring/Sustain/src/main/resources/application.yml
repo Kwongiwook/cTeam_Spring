@@ -1,4 +1,3 @@
-#hibernate
 spring:
   jpa:
     hibernate:
@@ -12,6 +11,7 @@ spring:
         temp:
           use_jdbc_metadata_defaults: false
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
   profiles:
     include: key
   cache:
@@ -19,16 +19,10 @@ spring:
   redis:
     host: localhost
     port: 6379
-
-#logging
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: debug
-        type:
-          descriptor:
-            sql: trace
+  resources:
+    static-locations: -classpath:/static/**
+  mvc:
+    static-path-pattern: /static/**
 
 server:
   port: 753
@@ -36,3 +30,19 @@ server:
 mybatis:
   mapper-locations: /mapper/**/*.xml
   type-aliases-package: com.ssh.sustain.model
+
+logging:
+  level:
+    jdbc:
+      connection: off
+      sqlonly: off
+      sqltimeing: info
+      resultset: off
+      resultsettable: info
+      audit: off
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql: trace
