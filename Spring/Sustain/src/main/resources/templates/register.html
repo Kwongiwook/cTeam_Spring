@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+
+<head>
+    <title>Title</title>
+</head>
+
+<th:block layout:fragment="content">
+    <div class="content-wrapper">
+        <form id="loginForm" th:action="@{/regiseter}" th:method="post">
+            <div class="form-gruop">
+                <input class="form-control" type="email" name="email" required>
+                <input class="form-control" type="password" name="pwd" required>
+                <input class="form-control" type="text" name="nickname" required>
+            </div>
+            <button type="button" id="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <script type="text/javascript">
+            "use strict";
+
+            window.onload = function () {
+                document.getElementById('submit').addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    let formData = $("#loginForm").serializeObject();
+                    $.ajax({
+                        url: '/register',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(formData),
+                    })
+                        .done(function (data) {
+                            alert(data);
+                        })
+                        .fail(function (xhr, status, errorThrown) {
+                        })
+                });
+            };
+
+            $.fn.serializeObject = function () {
+                "use strict"
+                var result = {}
+                var extend = function (i, element) {
+                    var node = result[element.name]
+                    if ("undefined" !== typeof node && node !== null) {
+                        if ($.isArray(node)) {
+                            node.push(element.value)
+                        } else {
+                            result[element.name] = [node, element.value]
+                        }
+                    } else {
+                        result[element.name] = element.value
+                    }
+                }
+
+                $.each(this.serializeArray(), extend)
+                return result
+            };
+        </script>
+    </div>
+</th:block>
+</html>

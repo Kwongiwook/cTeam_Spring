@@ -37,10 +37,10 @@
         WHERE PWD = #{pwd}
     </select>
 
-    <select id="findNormalUserByPwd" resultType="com.ssh.sustain.dto.user.NormalUserDTO">
+    <select id="findNormalUserByEmail" resultType="com.ssh.sustain.dto.user.NormalUserDTO">
         SELECT EMAIL, PWD, NICKNAME, AUTH
         FROM USER
-        WHERE PWD = #{pwd}
+        WHERE EMAIL = #{email}
     </select>
 
     <update id="update">

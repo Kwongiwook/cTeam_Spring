@@ -1,15 +1,15 @@
 package com.ssh.sustain.config;
 
-import com.ssh.sustain.security.auth.user.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.ssh.sustain.security.auth.user.normal.CustomUserDetailsService;
+import com.ssh.sustain.security.auth.user.CustomAuthenticationSuccessHandler;
 import com.ssh.sustain.security.auth.user.oauth2.CustomOAuth2UserService;
 import com.ssh.sustain.security.auth.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
@@ -17,8 +17,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2AuthenticationSuccessHandler OAuth2AuthenticationSuccessHandler;
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -27,26 +29,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                     .and()
 
+                .csrf()
+                    .disable()
+
                 .httpBasic()
                     .disable()
 
                 .formLogin()
-                    .disable()
+                    .loginPage("/login")
+                        .usernameParameter("email")
+                        .passwordParameter("pwd")
+                    .successHandler(customAuthenticationSuccessHandler)
+                    .and()
 
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
 
                 .authorizeRequests()
-                    .antMatchers("/", "/static/**").permitAll()
-                    .antMatchers("/login", "/register").permitAll();
+                    .antMatchers("/", "/static/**", "/webjars/**").permitAll()
+                    .antMatchers("/login", "/register").permitAll()
+                    .anyRequest().authenticated();
 
         http
                 .logout()
                     .deleteCookies("JSESSIONID", "accessToken");
 
         http
-                .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http
                 .oauth2Login()
@@ -54,13 +64,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .userInfoEndpoint()
                         .userService(customOAuth2UserService)
                         .and()
-                .successHandler(OAuth2AuthenticationSuccessHandler);
+                .successHandler(customAuthenticationSuccessHandler);
     }
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        // 이거 없으면 PasswordEncoder Bean injection 못함.
-        return new BCryptPasswordEncoder();
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(customUserDetailsService);
     }
 
 }

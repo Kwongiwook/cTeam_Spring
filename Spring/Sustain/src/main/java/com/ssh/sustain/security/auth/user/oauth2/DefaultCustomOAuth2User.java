@@ -1,6 +1,7 @@
 package com.ssh.sustain.security.auth.user.oauth2;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -11,7 +12,7 @@ import java.util.Set;
  * CustomOAuth2User의 Default Implementation. email이 user identify 목적으로 쓰이기에 nameAttributeKey 또한 email이다.
  * uid 역시 unique하기에 candidate key로써 기능할 수 있지만 social user가 아닌 경우를 고려해서 email을 사용한다.
  */
-public class DefaultCustomOAuth2User implements CustomOAuth2User, Serializable {
+public class DefaultCustomOAuth2User implements DefaultUserAPI, Serializable, OAuth2User {
     private static final long serialVersionUID = 1L;
 
     private final Set<GrantedAuthority> authorities;
@@ -31,7 +32,6 @@ public class DefaultCustomOAuth2User implements CustomOAuth2User, Serializable {
     /**
      * @return social login response에 포함된 "ID"를 리턴한다.
      */
-    @Override
     public String getUID() {
         return this.getAttributes().get("sub").toString();
     }

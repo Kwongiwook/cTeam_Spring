@@ -1,9 +1,15 @@
 package com.ssh.sustain.service.user;
 
+import com.ssh.sustain.config.SecurityConfig;
+import com.ssh.sustain.dto.user.ClaimUserDTO;
+import com.ssh.sustain.dto.user.NormalUserDTO;
+import com.ssh.sustain.dto.user.RegisterUserDTO;
 import com.ssh.sustain.mapper.user.UserMapper;
 import com.ssh.sustain.model.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +19,8 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserMapper mapper;
+    private final UserMapper mapper;
+    private final PasswordEncoder encoder;
 
     @Override
     public User saveSocial(User user) {
@@ -22,13 +28,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveNormal(User user) {
+    public RegisterUserDTO saveNormal(RegisterUserDTO user) {
+        user.setPwd(encoder.encode(user.getPwd()));
         return mapper.saveNormal(user).equals(1) ? user : null;
     }
 
     @Override
     public User findByEmail(String email) {
         return mapper.findByEmail(email);
+    }
+
+    @Override
+    public ClaimUserDTO findClaimUserByEmail(String email) {
+        return mapper.findClaimUserByEmail(email);
+    }
+
+    @Override
+    public NormalUserDTO findNormalUserByEmail(String email) {
+        return mapper.findNormalUserByEmail(email);
     }
 
     @Override

@@ -11,8 +11,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
@@ -65,9 +67,10 @@ public class JwtUtil {
     }
 
     private Claims generateClaims(String name, String type) {
-        Map<String, Object> userMap = ClaimUserDTO.builder()
-                .user(userService.findByEmail(name))
-                .build().toMap();
+        Map<String, Object> userMap = type.equalsIgnoreCase("social") ?
+                userService.findClaimUserByEmail(name).toMap()
+                :
+                userService.findNormalUserByEmail(name).toClaimsMap();
         Claims claims = Jwts.claims().setSubject(name);
         claims.put("type", type);
         claims.put("attr", userMap);
@@ -84,15 +87,31 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Authentication getAuthentication(String jwt) {
-        Claims claims = parseToken(jwt);
-        if (claims.get("type").equals("social")) {
-            Map<String, Object> attr = (Map<String, Object>) claims.get("attr");
-            Set<GrantedAuthority> authorities = Collections.singleton(new OAuth2UserAuthority(attr));
-            DefaultCustomOAuth2User user = new DefaultCustomOAuth2User(authorities, attr, CustomOAuth2UserService.USER_ATTIBUTE_KEY);
-            return new OAuth2AuthenticationToken(user, user.getAuthorities(), user.getName());
-        }
-        return null;
+    public Authentication getAuthentication(String token) {
+        Claims claims = parseToken(token);
+        return claims.get("type").equals("social") ?
+                oAuth2Authentication(claims)
+                :
+                usernamePasswordAuthentication(claims);
+    }
+
+    private OAuth2AuthenticationToken oAuth2Authentication(Claims claims) {
+        Map<String, Object> attr = (Map<String, Object>) claims.get("attr");
+        Set<GrantedAuthority> authorities = Collections.singleton(new OAuth2UserAuthority(attr));
+        DefaultCustomOAuth2User user = new DefaultCustomOAuth2User(authorities, attr, CustomOAuth2UserService.USER_ATTIBUTE_KEY);
+        return new OAuth2AuthenticationToken(user, user.getAuthorities(), user.getName());
+    }
+
+    private UsernamePasswordAuthenticationToken usernamePasswordAuthentication(Claims claims) {
+        Map<String, Object> attr = (Map<String, Object>) claims.get("attr");
+        Map<String, Object> user = userService.findNormalUserByEmail((String) attr.get("email")).toMap();
+        Set<SimpleGrantedAuthority> auth = Collections
+                .singleton(new SimpleGrantedAuthority((String) user.get("auth")));
+
+        //Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities
+        //principal == username, credentials == pwd
+
+        return new UsernamePasswordAuthenticationToken(user.get("email"), "", auth);
     }
 
     public String getEmail(String token) {

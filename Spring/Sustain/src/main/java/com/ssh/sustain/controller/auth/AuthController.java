@@ -1,15 +1,25 @@
 package com.ssh.sustain.controller.auth;
 
+import com.ssh.sustain.dto.user.NormalUserDTO;
+import com.ssh.sustain.dto.user.RegisterUserDTO;
+import com.ssh.sustain.model.user.User;
 import com.ssh.sustain.repository.TokenRepository;
 import com.ssh.sustain.security.auth.cookie.CookieUtil;
 import com.ssh.sustain.security.auth.jwt.JwtUtil;
+import com.ssh.sustain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 
 @Log4j2
@@ -20,27 +30,33 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final TokenRepository tokenRepository;
     private final CookieUtil cookieUtil;
+    private final UserService userService;
 
     @GetMapping(value = "/register")
-    public String toRegister() {
-        return "/auth/register";
+    public String toRegister() throws Exception {
+        return "register";
     }
 
     @PostMapping(value = "/register")
-    public void register() {
-
+    public ModelAndView register(@RequestBody RegisterUserDTO userDTO) throws Exception {
+        userService.saveNormal(userDTO);
+        return new ModelAndView("index");
     }
 
-    // 로그인이 되면 애초에 로그인 버튼이 안보이게 할 것이지만 일단 선언만 해둠.
-    @PreAuthorize(value = "isAnonymous()")
     @GetMapping(value = "/login")
     public String toLogin() {
-        return "/auth/login";
+        return "login";
     }
 
-    @PostMapping(value = "/login")
-    public void login() {
+    @PostMapping(value = "/login", consumes = "application/json")
+    public void login(@RequestBody NormalUserDTO user) {
 
+    }
+
+    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @GetMapping("/testing")
+    public String test() {
+        return "register";
     }
 
 }

@@ -1,14 +1,16 @@
-package com.ssh.sustain.security.auth.user.oauth2;
+package com.ssh.sustain.security.auth.user;
 
 import com.ssh.sustain.model.token.Token;
 import com.ssh.sustain.model.user.User;
 import com.ssh.sustain.repository.TokenRepository;
 import com.ssh.sustain.security.auth.cookie.CookieUtil;
 import com.ssh.sustain.security.auth.jwt.JwtUtil;
+import com.ssh.sustain.security.auth.user.oauth2.DefaultCustomOAuth2User;
 import com.ssh.sustain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -20,13 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * 이 클래스는 OAuth2의 AuthenticationSuccessHandler로 기능한다.
- */
 @Component
 @RequiredArgsConstructor
 @Log4j2
-public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     // save or update
     private final UserService userService;
@@ -49,7 +48,9 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws ServletException, IOException {
-        persistence((DefaultCustomOAuth2User) authentication.getPrincipal());
+        if (authentication.getPrincipal() instanceof OAuth2User) {
+            persistence((DefaultCustomOAuth2User) authentication.getPrincipal());
+        }
         request.setAttribute("Authorization", authentication);
 
         String refreshToken;

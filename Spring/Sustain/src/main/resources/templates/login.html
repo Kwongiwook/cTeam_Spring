@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+
+<head>
+    <title>Title</title>
+</head>
+
+<th:block layout:fragment="content">
+    <div class="content-wrapper">
+        <div class="container">
+            <form id="login" role="form" th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <input class="form-control" type="text" placeholder="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="password" placeholder="pwd" name="pwd" required>
+                </div>
+                <input type="submit">
+            </form>
+
+            <a href="/oauth2/authorization/google" th:href="@{/oauth2/authorization/google}">Google</a>
+            <a href="/oauth2/authorization/naver" th:href="@{/oauth2/authorization/naver}">Naver</a>
+        </div>
+    </div>
+</th:block>
+</html>

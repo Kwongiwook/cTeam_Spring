@@ -2,6 +2,7 @@ package com.ssh.sustain.mapper.user;
 
 import com.ssh.sustain.dto.user.ClaimUserDTO;
 import com.ssh.sustain.dto.user.NormalUserDTO;
+import com.ssh.sustain.dto.user.RegisterUserDTO;
 import com.ssh.sustain.model.user.User;
 import org.apache.ibatis.annotations.*;
 
@@ -12,7 +13,7 @@ public interface UserMapper {
 
     Integer saveSocial(User user);
 
-    Integer saveNormal(User user);
+    Integer saveNormal(RegisterUserDTO user);
 
     User findByEmail(String email);
 
@@ -20,7 +21,7 @@ public interface UserMapper {
 
     User findByPwd(String pwd);
 
-    NormalUserDTO findNormalUserByPwd(String pwd);
+    NormalUserDTO findNormalUserByEmail(String pwd);
 
     List<User> findAll();
 
