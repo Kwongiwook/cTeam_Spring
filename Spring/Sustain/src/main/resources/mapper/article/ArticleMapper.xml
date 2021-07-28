@@ -2,6 +2,70 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssh.sustain.model.article.Article">
+<mapper namespace="com.ssh.sustain.mapper.article.ArticleMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="art_id">
+        INSERT INTO ARTICLE(ART_ID, ART_TITLE, ART_CONTENT, ART_WRITER)
+        VALUES (#{art_id}, #{art_title}, #{art_content}, #{art_writer});
+    </insert>
+
+    <insert id="saveTagRel">
+        INSERT INTO ARTICLE_TAG (ART_ID, TAG_ID)
+        VALUES (#{art_id}, #{tag_id})
+    </insert>
+
+    <insert id="saveBoardRel">
+        INSERT INTO BOARD_REL (BO_ID, ART_ID)
+        VALUES (#{bo_id}, #{art_id})
+    </insert>
+
+    <select id="read" resultType="com.ssh.sustain.dto.article.ArticleDTO">
+        SELECT ART_ID, ART_TITLE, ART_CONTENT, ART_WRITER, CREATE_DATE
+        FROM ARTICLE
+    </select>
+
+    <delete id="delete">
+        DELETE
+        FROM ARTICLE
+        WHERE ART_ID = #{art_id}
+    </delete>
+
+    <select id="findArticleDTO" resultType="com.ssh.sustain.dto.article.ArticleDTO">
+        SELECT ART_ID, ART_TITLE, ART_CONTENT, ART_WRITER, CREATE_DATE
+        FROM ARTICLE
+        WHERE ART_ID = #{art_id}
+    </select>
+
+    <!--튜닝 필요 :  Full Scan(Table scan)-->
+    <select id="findListByTag" resultMap="ListByTag">
+        SELECT TAG_ID, ART_ID, ART_TITLE, ART_WRITER, CREATE_DATE
+        FROM (
+                 SELECT TAG_ID, ART_ID, ART_TITLE, ART_WRITER, CREATE_DATE
+                 FROM ARTICLE ART
+                          LEFT OUTER JOIN ARTICLE_TAG TAG USING (ART_ID)
+                 WHERE TAG.TAG_ID = #{tag_id}
+                 LIMIT #{criteria.amount} OFFSET #{criteria.page}
+             ) LIST
+    </select>
+
+    <resultMap id="ListByBoard" type="com.ssh.sustain.dto.article.BoardArticleList">
+        <id property="bo_id" column="bo_id"/>
+        <result property="bo_id" column="bo_id"/>
+        <collection property="articleLists" resultMap="ArticleList"/>
+    </resultMap>
+
+    <resultMap id="ListByTag" type="com.ssh.sustain.dto.article.TagArticleList">
+        <id property="tag_id" column="tag_id"/>
+        <result property="tag_id" column="tag_id"/>
+        <collection property="articleLists" resultMap="ArticleList"/>
+    </resultMap>
+
+    <resultMap id="ArticleList" type="com.ssh.sustain.dto.article.ArticleList">
+        <result property="art_id" column="art_id"/>
+        <result property="art_title" column="art_title"/>
+        <result property="art_writer" column="art_writer"/>
+        <result property="create_date" column="create_date"/>
+    </resultMap>
+
 
 </mapper>
