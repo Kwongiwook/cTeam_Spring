@@ -1,4 +1,4 @@
-package com.ssh.sustain.model.token;
+package com.ssh.sustain.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

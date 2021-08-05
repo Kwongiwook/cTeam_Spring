@@ -1,6 +1,6 @@
 package com.ssh.sustain.security.auth.user;
 
-import com.ssh.sustain.model.token.Token;
+import com.ssh.sustain.model.user.Token;
 import com.ssh.sustain.model.user.User;
 import com.ssh.sustain.repository.TokenRepository;
 import com.ssh.sustain.security.auth.cookie.CookieUtil;

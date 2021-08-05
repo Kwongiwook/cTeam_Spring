@@ -18,10 +18,4 @@ public class BootApplication {
                 .run(args);
     }
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        // 이거 없으면 PasswordEncoder Bean injection 못함.
-        return new BCryptPasswordEncoder();
-    }
-
 }
